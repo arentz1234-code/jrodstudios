@@ -1,69 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+
+const services: Record<string, { id: string; name: string; description: string; price: number; duration: number }> = {
+  "regular-cut": { id: "regular-cut", name: "Regular Cut", description: "Classic precision cut tailored to your style", price: 30, duration: 30 },
+  "skin-fade": { id: "skin-fade", name: "Skin Fade", description: "Sharp, clean fade down to the skin", price: 30, duration: 45 },
+  "beard-service": { id: "beard-service", name: "Beard Service", description: "Professional trim, shape, and conditioning", price: 20, duration: 30 },
+  "haircut-beard": { id: "haircut-beard", name: "Haircut & Beard", description: "Complete grooming experience", price: 45, duration: 50 },
+  "hot-towel-shave": { id: "hot-towel-shave", name: "Hot Towel Shave", description: "Luxurious traditional straight razor shave", price: 65, duration: 55 },
+  "line-up": { id: "line-up", name: "Line Up", description: "Clean edges and sharp lines", price: 10, duration: 15 },
+  "facial-hair": { id: "facial-hair", name: "Facial Hair", description: "Mustache & goatee trim", price: 5, duration: 15 },
+  "eyebrows": { id: "eyebrows", name: "Eyebrows", description: "Eyebrow cleanup and shaping", price: 5, duration: 5 },
+};
 
 interface Context {
   params: Promise<{ id: string }>;
 }
 
 export async function GET(request: NextRequest, context: Context) {
-  try {
-    const { id } = await context.params;
+  const { id } = await context.params;
+  const service = services[id];
 
-    const service = await prisma.service.findUnique({
-      where: { id },
-    });
-
-    if (!service) {
-      return NextResponse.json(
-        { error: "Service not found" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(service);
-  } catch (error) {
-    console.error("Error fetching service:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch service" },
-      { status: 500 }
-    );
+  if (!service) {
+    return NextResponse.json({ error: "Service not found" }, { status: 404 });
   }
+
+  return NextResponse.json(service);
 }
 
 export async function PUT(request: NextRequest, context: Context) {
-  try {
-    const { id } = await context.params;
-    const body = await request.json();
-
-    const service = await prisma.service.update({
-      where: { id },
-      data: body,
-    });
-
-    return NextResponse.json(service);
-  } catch (error) {
-    console.error("Error updating service:", error);
-    return NextResponse.json(
-      { error: "Failed to update service" },
-      { status: 500 }
-    );
-  }
+  const { id } = await context.params;
+  const body = await request.json();
+  return NextResponse.json({ id, ...body });
 }
 
 export async function DELETE(request: NextRequest, context: Context) {
-  try {
-    const { id } = await context.params;
-
-    await prisma.service.delete({
-      where: { id },
-    });
-
-    return NextResponse.json({ message: "Service deleted" });
-  } catch (error) {
-    console.error("Error deleting service:", error);
-    return NextResponse.json(
-      { error: "Failed to delete service" },
-      { status: 500 }
-    );
-  }
+  const { id } = await context.params;
+  return NextResponse.json({ message: `Service ${id} deleted` });
 }
