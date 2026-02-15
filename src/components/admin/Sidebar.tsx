@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { BUSINESS_INFO } from "@/lib/constants";
 import {
@@ -12,7 +12,6 @@ import {
   IoList,
   IoLogOut,
 } from "react-icons/io5";
-import { signOut } from "next-auth/react";
 
 const navItems = [
   { href: "/admin", icon: IoHome, label: "Dashboard" },
@@ -24,15 +23,21 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem("admin_auth");
+    router.push("/admin/login");
+  };
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-ocean-deep text-white flex flex-col">
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-forest-dark text-cream flex flex-col">
       {/* Logo */}
-      <div className="p-6 border-b border-ocean-medium">
-        <Link href="/admin" className="text-xl font-bold">
+      <div className="p-6 border-b border-cream/10">
+        <Link href="/admin" className="font-serif text-xl font-bold">
           {BUSINESS_INFO.name}
         </Link>
-        <p className="text-ocean-light text-sm mt-1">Admin Dashboard</p>
+        <p className="text-cream/50 text-sm mt-1">Admin Dashboard</p>
       </div>
 
       {/* Navigation */}
@@ -50,8 +55,8 @@ export default function Sidebar() {
                   className={cn(
                     "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
                     isActive
-                      ? "bg-ocean-medium text-white"
-                      : "text-ocean-light hover:bg-ocean-medium/50"
+                      ? "bg-forest text-cream"
+                      : "text-cream/70 hover:bg-forest/50"
                   )}
                 >
                   <item.icon className="w-5 h-5" />
@@ -64,10 +69,10 @@ export default function Sidebar() {
       </nav>
 
       {/* Logout */}
-      <div className="p-4 border-t border-ocean-medium">
+      <div className="p-4 border-t border-cream/10">
         <button
-          onClick={() => signOut({ callbackUrl: "/admin/login" })}
-          className="flex items-center gap-3 px-4 py-3 w-full text-ocean-light hover:bg-ocean-medium/50 rounded-lg transition-colors"
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-4 py-3 w-full text-cream/70 hover:bg-forest/50 rounded-lg transition-colors"
         >
           <IoLogOut className="w-5 h-5" />
           <span>Sign Out</span>
