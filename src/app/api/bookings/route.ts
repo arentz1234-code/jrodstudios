@@ -1,41 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { addMinutes, format, startOfDay, endOfDay } from "date-fns";
+import { addMinutes, format } from "date-fns";
+
+// Service data for calculating end times
+const services: Record<string, { name: string; price: number; duration: number }> = {
+  "regular-cut": { name: "Regular Cut", price: 30, duration: 30 },
+  "skin-fade": { name: "Skin Fade", price: 30, duration: 45 },
+  "beard-service": { name: "Beard Service", price: 20, duration: 30 },
+  "haircut-beard": { name: "Haircut & Beard", price: 45, duration: 50 },
+  "hot-towel-shave": { name: "Hot Towel Shave", price: 65, duration: 55 },
+  "line-up": { name: "Line Up", price: 10, duration: 15 },
+  "facial-hair": { name: "Facial Hair", price: 5, duration: 15 },
+  "eyebrows": { name: "Eyebrows", price: 5, duration: 5 },
+};
 
 export async function GET(request: NextRequest) {
-  try {
-    const searchParams = request.nextUrl.searchParams;
-    const date = searchParams.get("date");
-    const status = searchParams.get("status");
-
-    const where: Record<string, unknown> = {};
-
-    if (date) {
-      const dateObj = new Date(date);
-      where.date = {
-        gte: startOfDay(dateObj),
-        lte: endOfDay(dateObj),
-      };
-    }
-
-    if (status) {
-      where.status = status;
-    }
-
-    const bookings = await prisma.booking.findMany({
-      where,
-      include: { service: true },
-      orderBy: [{ date: "asc" }, { startTime: "asc" }],
-    });
-
-    return NextResponse.json(bookings);
-  } catch (error) {
-    console.error("Error fetching bookings:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch bookings" },
-      { status: 500 }
-    );
-  }
+  // For demo - return empty array (no bookings stored)
+  const searchParams = request.nextUrl.searchParams;
+  console.log("Fetching bookings with params:", searchParams.toString());
+  return NextResponse.json([]);
 }
 
 export async function POST(request: Request) {
@@ -52,30 +34,13 @@ export async function POST(request: Request) {
     } = body;
 
     // Validate required fields
-    if (
-      !serviceId ||
-      !date ||
-      !startTime ||
-      !customerName ||
-      !customerEmail ||
-      !customerPhone
-    ) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
+    if (!serviceId || !date || !startTime || !customerName || !customerEmail || !customerPhone) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Get service to calculate end time
-    const service = await prisma.service.findUnique({
-      where: { id: serviceId },
-    });
-
+    const service = services[serviceId];
     if (!service) {
-      return NextResponse.json(
-        { error: "Service not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Service not found" }, { status: 404 });
     }
 
     // Calculate end time
@@ -85,66 +50,30 @@ export async function POST(request: Request) {
     const endDate = addMinutes(startDate, service.duration);
     const endTime = format(endDate, "HH:mm");
 
-    // Check for conflicting bookings
-    const bookingDate = new Date(date);
-    const existingBooking = await prisma.booking.findFirst({
-      where: {
-        date: {
-          gte: startOfDay(bookingDate),
-          lte: endOfDay(bookingDate),
-        },
-        status: { not: "cancelled" },
-        OR: [
-          {
-            AND: [
-              { startTime: { lte: startTime } },
-              { endTime: { gt: startTime } },
-            ],
-          },
-          {
-            AND: [
-              { startTime: { lt: endTime } },
-              { endTime: { gte: endTime } },
-            ],
-          },
-          {
-            AND: [
-              { startTime: { gte: startTime } },
-              { endTime: { lte: endTime } },
-            ],
-          },
-        ],
+    // Create mock booking response (in production this would save to database)
+    const booking = {
+      id: `booking-${Date.now()}`,
+      serviceId,
+      date: new Date(date).toISOString(),
+      startTime,
+      endTime,
+      customerName,
+      customerEmail,
+      customerPhone,
+      notes: notes || null,
+      status: "confirmed",
+      service: {
+        id: serviceId,
+        name: service.name,
+        price: service.price,
+        duration: service.duration,
       },
-    });
-
-    if (existingBooking) {
-      return NextResponse.json(
-        { error: "This time slot is no longer available" },
-        { status: 409 }
-      );
-    }
-
-    // Create booking
-    const booking = await prisma.booking.create({
-      data: {
-        serviceId,
-        date: startOfDay(bookingDate),
-        startTime,
-        endTime,
-        customerName,
-        customerEmail,
-        customerPhone,
-        notes: notes || null,
-      },
-      include: { service: true },
-    });
+      createdAt: new Date().toISOString(),
+    };
 
     return NextResponse.json(booking, { status: 201 });
   } catch (error) {
     console.error("Error creating booking:", error);
-    return NextResponse.json(
-      { error: "Failed to create booking" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to create booking" }, { status: 500 });
   }
 }
