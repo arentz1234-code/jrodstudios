@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
@@ -15,7 +14,6 @@ interface BusinessHours {
 }
 
 export default function SettingsPage() {
-  const { data: session } = useSession();
   const [businessHours, setBusinessHours] = useState<BusinessHours[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -82,15 +80,15 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-500">
-                  Name
+                  Role
                 </label>
-                <p className="text-gray-900">{session?.user?.name || "-"}</p>
+                <p className="text-gray-900">Administrator</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-500">
-                  Email
+                  Status
                 </label>
-                <p className="text-gray-900">{session?.user?.email || "-"}</p>
+                <p className="text-gray-900">Logged In</p>
               </div>
             </div>
           </div>
