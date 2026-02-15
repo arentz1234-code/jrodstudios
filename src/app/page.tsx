@@ -490,6 +490,7 @@ function BookingSection() {
   const [currentStep, setCurrentStep] = useState(1);
   const [services, setServices] = useState<Service[]>([]);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [addOnServices, setAddOnServices] = useState<Service[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
@@ -507,8 +508,27 @@ function BookingSection() {
     { id: 1, title: "Service" },
     { id: 2, title: "Date" },
     { id: 3, title: "Time" },
-    { id: 4, title: "Details" },
+    { id: 4, title: "Extras" },
+    { id: 5, title: "Details" },
   ];
+
+  // Calculate totals including add-ons
+  const totalPrice = (selectedService?.price || 0) + addOnServices.reduce((sum, s) => sum + s.price, 0);
+  const totalDuration = (selectedService?.duration || 0) + addOnServices.reduce((sum, s) => sum + s.duration, 0);
+
+  const toggleAddOn = (service: Service) => {
+    setAddOnServices((prev) => {
+      const exists = prev.find((s) => s.id === service.id);
+      if (exists) {
+        return prev.filter((s) => s.id !== service.id);
+      }
+      return [...prev, service];
+    });
+  };
+
+  const isAddOnSelected = (serviceId: string) => {
+    return addOnServices.some((s) => s.id === serviceId);
+  };
 
   useEffect(() => {
     async function fetchServices() {
@@ -552,7 +572,11 @@ function BookingSection() {
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
-    setCurrentStep(4);
+    setCurrentStep(4); // Go to Add-ons step
+  };
+
+  const handleAddOnsNext = () => {
+    setCurrentStep(5); // Go to Details step
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -722,18 +746,126 @@ function BookingSection() {
           </AnimatedSection>
         )}
 
-        {/* Step 4: Contact Details */}
+        {/* Step 4: Add-ons */}
         {currentStep === 4 && (
+          <AnimatedSection>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Add-ons List */}
+              <div className="lg:col-span-2">
+                <h3 className="font-serif text-2xl text-cream mb-6">Add more to your appointment?</h3>
+                <div className="space-y-1">
+                  {services
+                    .filter((s) => s.id !== selectedService?.id)
+                    .map((service) => {
+                      const isSelected = isAddOnSelected(service.id);
+                      return (
+                        <button
+                          key={service.id}
+                          onClick={() => toggleAddOn(service)}
+                          className={`w-full p-4 text-left transition-all border-b border-forest/10 ${
+                            isSelected ? "bg-forest/10" : "hover:bg-cream-light/50"
+                          }`}
+                        >
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-cream">{service.name}</h4>
+                              {service.description && (
+                                <p className="text-cream/50 text-sm mt-1 line-clamp-2">{service.description}</p>
+                              )}
+                              <p className="text-cream/70 text-sm mt-1">
+                                {formatPrice(service.price)} · {formatDuration(service.duration)}
+                              </p>
+                              {isSelected && (
+                                <p className="text-forest text-sm mt-2 flex items-center gap-1">
+                                  <IoCheckmarkCircle className="w-4 h-4" />
+                                  Added
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                </div>
+              </div>
+
+              {/* Summary Sidebar */}
+              <div className="lg:col-span-1">
+                <div className="bg-cream-light border border-forest/10 p-4 sticky top-24">
+                  <h4 className="font-serif text-lg text-forest mb-4">Appointment summary</h4>
+
+                  <div className="border border-forest/10 rounded mb-4">
+                    <div className="p-3 border-b border-forest/10">
+                      <p className="font-semibold text-forest">{selectedService?.name}</p>
+                      <p className="text-forest/60 text-sm">
+                        {selectedService && formatPrice(selectedService.price)} · {selectedService && formatDuration(selectedService.duration)}
+                      </p>
+                    </div>
+
+                    {addOnServices.map((service) => (
+                      <div key={service.id} className="p-3 border-b border-forest/10 last:border-b-0 flex justify-between items-center">
+                        <div>
+                          <p className="text-forest">{service.name}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-forest">{formatPrice(service.price)}</span>
+                          <button
+                            onClick={() => toggleAddOn(service)}
+                            className="text-forest/50 hover:text-forest p-1"
+                            aria-label="Remove"
+                          >
+                            <IoCloseOutline className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex justify-between items-center mb-4 py-2 border-t border-forest/10">
+                    <span className="font-semibold text-forest">Total</span>
+                    <span className="font-serif text-xl text-forest">{formatPrice(totalPrice)}</span>
+                  </div>
+
+                  <button
+                    onClick={handleAddOnsNext}
+                    className="w-full btn-primary"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </div>
+          </AnimatedSection>
+        )}
+
+        {/* Step 5: Contact Details */}
+        {currentStep === 5 && (
           <AnimatedSection>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
               {/* Summary */}
               <div className="bg-cream-light border border-forest/10 p-4 sm:p-6 order-2 lg:order-1">
                 <h3 className="font-serif text-lg sm:text-xl text-forest mb-4 sm:mb-6">Booking Summary</h3>
                 <div className="space-y-3 sm:space-y-4">
-                  <div className="flex justify-between py-2 border-b border-forest/10 text-sm sm:text-base">
-                    <span className="text-forest/50">Service</span>
-                    <span className="text-forest">{selectedService?.name}</span>
+                  {/* Main Service */}
+                  <div className="py-2 border-b border-forest/10">
+                    <div className="flex justify-between text-sm sm:text-base">
+                      <span className="text-forest font-medium">{selectedService?.name}</span>
+                      <span className="text-forest">{selectedService && formatPrice(selectedService.price)}</span>
+                    </div>
+                    <p className="text-forest/50 text-xs mt-1">{selectedService && formatDuration(selectedService.duration)}</p>
                   </div>
+
+                  {/* Add-on Services */}
+                  {addOnServices.map((service) => (
+                    <div key={service.id} className="py-2 border-b border-forest/10">
+                      <div className="flex justify-between text-sm sm:text-base">
+                        <span className="text-forest">{service.name}</span>
+                        <span className="text-forest">{formatPrice(service.price)}</span>
+                      </div>
+                      <p className="text-forest/50 text-xs mt-1">{formatDuration(service.duration)}</p>
+                    </div>
+                  ))}
+
                   <div className="flex justify-between py-2 border-b border-forest/10 text-sm sm:text-base">
                     <span className="text-forest/50">Date</span>
                     <span className="text-forest">{selectedDate && formatDate(selectedDate)}</span>
@@ -743,15 +875,13 @@ function BookingSection() {
                     <span className="text-forest">{selectedTime && formatTime(selectedTime)}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-forest/10 text-sm sm:text-base">
-                    <span className="text-forest/50">Duration</span>
-                    <span className="text-forest">
-                      {selectedService && formatDuration(selectedService.duration)}
-                    </span>
+                    <span className="text-forest/50">Total Duration</span>
+                    <span className="text-forest">{formatDuration(totalDuration)}</span>
                   </div>
                   <div className="flex justify-between py-3 sm:py-4">
                     <span className="text-forest font-semibold">Total</span>
                     <span className="font-serif text-xl sm:text-2xl text-forest">
-                      {selectedService && formatPrice(selectedService.price)}
+                      {formatPrice(totalPrice)}
                     </span>
                   </div>
                 </div>
