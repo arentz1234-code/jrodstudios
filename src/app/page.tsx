@@ -107,8 +107,15 @@ function Navigation() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-20">
-          <a href="#" className="font-serif text-xl sm:text-2xl font-bold text-cream">
-            J.ROD<span className="text-forest">.</span>
+          <a href="#" className="flex items-center gap-2 sm:gap-3">
+            <div className="relative w-5 h-8 sm:w-6 sm:h-10 rounded-full overflow-hidden border-2 border-cream/30 bg-white">
+              <div className="absolute inset-0 barber-pole-stripes"></div>
+              <div className="absolute top-0 left-0 right-0 h-1 sm:h-1.5 bg-cream/80 rounded-t-full"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-1 sm:h-1.5 bg-cream/80 rounded-b-full"></div>
+            </div>
+            <span className="font-serif text-xl sm:text-2xl font-bold text-cream">
+              J.ROD<span className="text-forest">.</span>
+            </span>
           </a>
 
           {/* Desktop Nav */}
@@ -668,18 +675,18 @@ function BookingSection() {
                   onClick={() => handleServiceSelect(service)}
                   className={`p-4 sm:p-6 text-left transition-all border touch-manipulation ${
                     selectedService?.id === service.id
-                      ? "bg-cream-dark border-forest"
-                      : "bg-cream-dark border-cream/5 hover:border-cream/20 active:border-forest/50"
+                      ? "bg-cream-light border-forest"
+                      : "bg-cream-light border-forest/10 hover:border-forest/30 active:border-forest/50"
                   }`}
                 >
                   <div className="flex justify-between items-start mb-2 gap-3">
-                    <h4 className="font-serif text-lg sm:text-xl text-cream">{service.name}</h4>
+                    <h4 className="font-serif text-lg sm:text-xl text-forest">{service.name}</h4>
                     <span className="font-serif text-xl sm:text-2xl text-forest flex-shrink-0">
                       {formatPrice(service.price)}
                     </span>
                   </div>
-                  <p className="text-cream/50 text-sm mb-2">{service.description}</p>
-                  <p className="text-xs text-sage uppercase tracking-wider">
+                  <p className="text-forest/60 text-sm mb-2">{service.description}</p>
+                  <p className="text-xs text-forest/50 uppercase tracking-wider">
                     {formatDuration(service.duration)}
                   </p>
                 </button>
