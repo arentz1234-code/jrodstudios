@@ -129,20 +129,20 @@ function Calendar({
   };
 
   return (
-    <div className="bg-cream-dark border border-cream/10 p-6">
+    <div className="bg-cream-light border border-forest/10 p-6">
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}
-          className="p-2 hover:bg-cream/10 rounded transition-colors text-cream/70 hover:text-cream"
+          className="p-2 hover:bg-forest/10 rounded transition-colors text-forest/70 hover:text-forest"
         >
           <IoChevronBack className="w-5 h-5" />
         </button>
-        <h3 className="font-serif text-xl text-cream">
+        <h3 className="font-serif text-xl text-forest">
           {currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
         </h3>
         <button
           onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))}
-          className="p-2 hover:bg-cream/10 rounded transition-colors text-cream/70 hover:text-cream rotate-180"
+          className="p-2 hover:bg-forest/10 rounded transition-colors text-forest/70 hover:text-forest rotate-180"
         >
           <IoChevronBack className="w-5 h-5" />
         </button>
@@ -150,7 +150,7 @@ function Calendar({
 
       <div className="grid grid-cols-7 gap-1 mb-2">
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
-          <div key={day} className="text-center text-xs uppercase tracking-wider text-cream/40 py-2">
+          <div key={day} className="text-center text-xs uppercase tracking-wider text-forest/50 py-2">
             {day}
           </div>
         ))}
@@ -167,10 +167,10 @@ function Calendar({
                   isSameDay(date, selectedDate)
                     ? "bg-forest text-cream"
                     : isDisabled(date)
-                    ? "text-cream/20 cursor-not-allowed"
+                    ? "text-forest/20 cursor-not-allowed"
                     : isSameDay(date, today)
                     ? "border border-forest/50 text-forest hover:bg-forest/20"
-                    : "text-cream/70 hover:bg-cream/10"
+                    : "text-forest/70 hover:bg-forest/10"
                 }`}
               >
                 {date.getDate()}
@@ -197,7 +197,7 @@ function TimeSlots({
 }) {
   if (isLoading) {
     return (
-      <div className="bg-cream-dark border border-cream/10 p-8">
+      <div className="bg-cream-light border border-forest/10 p-8">
         <div className="flex items-center justify-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-forest"></div>
         </div>
@@ -207,8 +207,8 @@ function TimeSlots({
 
   if (slots.length === 0) {
     return (
-      <div className="bg-cream-dark border border-cream/10 p-8">
-        <p className="text-center text-cream/50 py-8">
+      <div className="bg-cream-light border border-forest/10 p-8">
+        <p className="text-center text-forest/50 py-8">
           No available times for this date.
         </p>
       </div>
@@ -216,8 +216,8 @@ function TimeSlots({
   }
 
   return (
-    <div className="bg-cream-dark border border-cream/10 p-6">
-      <h3 className="font-serif text-lg text-cream mb-4">Available Times</h3>
+    <div className="bg-cream-light border border-forest/10 p-6">
+      <h3 className="font-serif text-lg text-forest mb-4">Available Times</h3>
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
         {slots.map((slot) => (
           <button
@@ -226,7 +226,7 @@ function TimeSlots({
             className={`py-3 px-4 text-sm font-sans transition-all border ${
               selectedTime === slot
                 ? "bg-forest border-forest text-cream"
-                : "border-cream/10 text-cream/70 hover:border-forest/50 hover:text-cream"
+                : "border-forest/20 text-forest/70 hover:border-forest/50 hover:text-forest"
             }`}
           >
             {formatTime(slot)}
@@ -260,45 +260,45 @@ function BookingForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm text-cream/70 uppercase tracking-wider mb-2">Full Name</label>
+        <label className="block text-sm text-forest/70 uppercase tracking-wider mb-2">Full Name</label>
         <input
           type="text"
           required
           value={formData.customerName}
           onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-          className="w-full px-4 py-3 bg-forest-dark border border-cream/10 text-cream placeholder:text-cream/30 focus:outline-none focus:border-forest/50 transition-colors"
+          className="w-full px-4 py-3 bg-cream border border-forest/20 text-forest placeholder:text-forest/30 focus:outline-none focus:border-forest transition-colors"
           placeholder="John Doe"
         />
       </div>
       <div>
-        <label className="block text-sm text-cream/70 uppercase tracking-wider mb-2">Email</label>
+        <label className="block text-sm text-forest/70 uppercase tracking-wider mb-2">Email</label>
         <input
           type="email"
           required
           value={formData.customerEmail}
           onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
-          className="w-full px-4 py-3 bg-forest-dark border border-cream/10 text-cream placeholder:text-cream/30 focus:outline-none focus:border-forest/50 transition-colors"
+          className="w-full px-4 py-3 bg-cream border border-forest/20 text-forest placeholder:text-forest/30 focus:outline-none focus:border-forest transition-colors"
           placeholder="john@example.com"
         />
       </div>
       <div>
-        <label className="block text-sm text-cream/70 uppercase tracking-wider mb-2">Phone</label>
+        <label className="block text-sm text-forest/70 uppercase tracking-wider mb-2">Phone</label>
         <input
           type="tel"
           required
           value={formData.customerPhone}
           onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
-          className="w-full px-4 py-3 bg-forest-dark border border-cream/10 text-cream placeholder:text-cream/30 focus:outline-none focus:border-forest/50 transition-colors"
+          className="w-full px-4 py-3 bg-cream border border-forest/20 text-forest placeholder:text-forest/30 focus:outline-none focus:border-forest transition-colors"
           placeholder="(555) 123-4567"
         />
       </div>
       <div>
-        <label className="block text-sm text-cream/70 uppercase tracking-wider mb-2">Notes (optional)</label>
+        <label className="block text-sm text-forest/70 uppercase tracking-wider mb-2">Notes (optional)</label>
         <textarea
           value={formData.notes}
           onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
           rows={3}
-          className="w-full px-4 py-3 bg-forest-dark border border-cream/10 text-cream placeholder:text-cream/30 focus:outline-none focus:border-forest/50 transition-colors resize-none"
+          className="w-full px-4 py-3 bg-cream border border-forest/20 text-forest placeholder:text-forest/30 focus:outline-none focus:border-forest transition-colors resize-none"
           placeholder="Any special requests..."
         />
       </div>
@@ -467,18 +467,18 @@ function BookPageContent() {
                   onClick={() => handleServiceSelect(service)}
                   className={`p-6 text-left transition-all border ${
                     selectedService?.id === service.id
-                      ? "bg-cream-dark border-forest"
-                      : "bg-cream-dark border-cream/5 hover:border-cream/20"
+                      ? "bg-cream-light border-forest"
+                      : "bg-cream-light border-forest/10 hover:border-forest/30"
                   }`}
                 >
                   <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-serif text-xl text-cream">{service.name}</h3>
+                    <h3 className="font-serif text-xl text-forest">{service.name}</h3>
                     <span className="font-serif text-2xl text-forest">
                       {formatPrice(service.price)}
                     </span>
                   </div>
-                  <p className="text-cream/50 text-sm mb-2">{service.description}</p>
-                  <p className="text-xs text-sage uppercase tracking-wider">
+                  <p className="text-forest/60 text-sm mb-2">{service.description}</p>
+                  <p className="text-xs text-forest/50 uppercase tracking-wider">
                     {formatDuration(service.duration)}
                   </p>
                 </button>
@@ -518,29 +518,29 @@ function BookPageContent() {
         {currentStep === 4 && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Summary */}
-            <div className="bg-cream-dark border border-cream/10 p-6">
-              <h3 className="font-serif text-xl text-cream mb-6">Booking Summary</h3>
+            <div className="bg-cream-light border border-forest/10 p-6">
+              <h3 className="font-serif text-xl text-forest mb-6">Booking Summary</h3>
               <div className="space-y-4">
-                <div className="flex justify-between py-2 border-b border-cream/10">
-                  <span className="text-cream/50">Service</span>
-                  <span className="text-cream">{selectedService?.name}</span>
+                <div className="flex justify-between py-2 border-b border-forest/10">
+                  <span className="text-forest/50">Service</span>
+                  <span className="text-forest">{selectedService?.name}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-cream/10">
-                  <span className="text-cream/50">Date</span>
-                  <span className="text-cream">{selectedDate && formatDate(selectedDate)}</span>
+                <div className="flex justify-between py-2 border-b border-forest/10">
+                  <span className="text-forest/50">Date</span>
+                  <span className="text-forest">{selectedDate && formatDate(selectedDate)}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-cream/10">
-                  <span className="text-cream/50">Time</span>
-                  <span className="text-cream">{selectedTime && formatTime(selectedTime)}</span>
+                <div className="flex justify-between py-2 border-b border-forest/10">
+                  <span className="text-forest/50">Time</span>
+                  <span className="text-forest">{selectedTime && formatTime(selectedTime)}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-cream/10">
-                  <span className="text-cream/50">Duration</span>
-                  <span className="text-cream">
+                <div className="flex justify-between py-2 border-b border-forest/10">
+                  <span className="text-forest/50">Duration</span>
+                  <span className="text-forest">
                     {selectedService && formatDuration(selectedService.duration)}
                   </span>
                 </div>
                 <div className="flex justify-between py-4">
-                  <span className="text-cream font-semibold">Total</span>
+                  <span className="text-forest font-semibold">Total</span>
                   <span className="font-serif text-2xl text-forest">
                     {selectedService && formatPrice(selectedService.price)}
                   </span>
@@ -549,8 +549,8 @@ function BookPageContent() {
             </div>
 
             {/* Form */}
-            <div className="bg-cream-dark border border-cream/10 p-6">
-              <h3 className="font-serif text-xl text-cream mb-6">Your Details</h3>
+            <div className="bg-cream-light border border-forest/10 p-6">
+              <h3 className="font-serif text-xl text-forest mb-6">Your Details</h3>
               <BookingForm onSubmit={handleFormSubmit} isLoading={isSubmitting} />
             </div>
           </div>
