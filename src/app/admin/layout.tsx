@@ -1,27 +1,32 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "@/components/admin/Sidebar";
-import { SessionProvider } from "next-auth/react";
 
-function AdminLayoutContent({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession();
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const router = useRouter();
   const pathname = usePathname();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (status === "unauthenticated" && pathname !== "/admin/login") {
+    const auth = localStorage.getItem("admin_auth");
+    setIsAuthenticated(auth === "true");
+
+    if (auth !== "true" && pathname !== "/admin/login") {
       router.push("/admin/login");
     }
-  }, [status, router, pathname]);
+  }, [router, pathname]);
 
   // Show loading state while checking auth
-  if (status === "loading") {
+  if (isAuthenticated === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ocean-deep"></div>
+      <div className="min-h-screen flex items-center justify-center bg-cream">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-forest"></div>
       </div>
     );
   }
@@ -32,7 +37,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   }
 
   // Redirect if not authenticated
-  if (!session) {
+  if (!isAuthenticated) {
     return null;
   }
 
@@ -41,17 +46,5 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       <Sidebar />
       <main className="ml-64 p-8">{children}</main>
     </div>
-  );
-}
-
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <SessionProvider>
-      <AdminLayoutContent>{children}</AdminLayoutContent>
-    </SessionProvider>
   );
 }

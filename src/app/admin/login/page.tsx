@@ -1,16 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Card } from "@/components/ui/Card";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
 import { BUSINESS_INFO } from "@/lib/constants";
+
+const ADMIN_PASSWORD = "jrod2024";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -20,70 +17,56 @@ export default function LoginPage() {
     setIsLoading(true);
     setError("");
 
-    try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setError("Invalid email or password");
-      } else {
-        router.push("/admin");
-        router.refresh();
-      }
-    } catch {
-      setError("Something went wrong");
-    } finally {
-      setIsLoading(false);
+    if (password === ADMIN_PASSWORD) {
+      localStorage.setItem("admin_auth", "true");
+      router.push("/admin");
+    } else {
+      setError("Invalid password");
     }
+
+    setIsLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ocean-deep to-ocean-medium flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <div className="p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-ocean-deep">
-              {BUSINESS_INFO.name}
-            </h1>
-            <p className="text-gray-600 mt-2">Admin Login</p>
-          </div>
+    <div className="min-h-screen bg-forest-dark flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-cream-light border border-forest/10 p-8">
+        <div className="text-center mb-8">
+          <h1 className="font-serif text-2xl font-bold text-forest">
+            {BUSINESS_INFO.name}
+          </h1>
+          <p className="text-forest/60 mt-2">Admin Login</p>
+        </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-                {error}
-              </div>
-            )}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-sm">
+              {error}
+            </div>
+          )}
 
-            <Input
-              id="email"
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@jrodstudios.com"
-              required
-            />
-
-            <Input
-              id="password"
-              label="Password"
+          <div>
+            <label className="block text-sm text-forest/70 uppercase tracking-wider mb-2">
+              Password
+            </label>
+            <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
+              placeholder="Enter password"
               required
+              className="w-full px-4 py-3 bg-cream border border-forest/20 text-forest placeholder:text-forest/30 focus:outline-none focus:border-forest transition-colors"
             />
+          </div>
 
-            <Button type="submit" className="w-full" isLoading={isLoading}>
-              Sign In
-            </Button>
-          </form>
-        </div>
-      </Card>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full btn-primary"
+          >
+            {isLoading ? "Signing in..." : "Sign In"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
