@@ -136,3 +136,29 @@
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-forest/50;
 }
+
+/* Barber Pole Animation */
+.barber-pole-stripes {
+  background: repeating-linear-gradient(
+    -45deg,
+    #dc2626 0px,
+    #dc2626 8px,
+    #ffffff 8px,
+    #ffffff 16px,
+    #2563eb 16px,
+    #2563eb 24px,
+    #ffffff 24px,
+    #ffffff 32px
+  );
+  background-size: 32px 64px;
+  animation: barber-spin 1.5s linear infinite;
+}
+
+@keyframes barber-spin {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 64px;
+  }
+}

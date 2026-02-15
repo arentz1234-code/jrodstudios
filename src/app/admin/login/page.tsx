@@ -66,6 +66,12 @@ export default function LoginPage() {
             {isLoading ? "Signing in..." : "Sign In"}
           </button>
         </form>
+
+        <div className="mt-6 p-4 bg-forest/5 border border-forest/10 rounded">
+          <p className="text-sm text-forest/70 text-center">
+            <span className="font-semibold">Demo Password:</span> jrod2024
+          </p>
+        </div>
       </div>
     </div>
   );
