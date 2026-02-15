@@ -1,5 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { addMinutes, format } from "date-fns";
+import {
+  getAllBookings,
+  getBookingsByDate,
+  getBookingsByStatus,
+  addBooking,
+  isTimeSlotBooked,
+  type Booking,
+} from "@/lib/bookings-store";
 
 // Service data for calculating end times
 const services: Record<string, { name: string; price: number; duration: number }> = {
@@ -14,10 +22,21 @@ const services: Record<string, { name: string; price: number; duration: number }
 };
 
 export async function GET(request: NextRequest) {
-  // For demo - return empty array (no bookings stored)
   const searchParams = request.nextUrl.searchParams;
-  console.log("Fetching bookings with params:", searchParams.toString());
-  return NextResponse.json([]);
+  const status = searchParams.get("status");
+  const date = searchParams.get("date");
+
+  let bookings: Booking[];
+
+  if (date) {
+    bookings = getBookingsByDate(date);
+  } else if (status && status !== "all") {
+    bookings = getBookingsByStatus(status);
+  } else {
+    bookings = getAllBookings();
+  }
+
+  return NextResponse.json(bookings);
 }
 
 export async function POST(request: Request) {
@@ -43,6 +62,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Service not found" }, { status: 404 });
     }
 
+    // Check if time slot is already booked
+    const dateStr = new Date(date).toISOString().split("T")[0];
+    if (isTimeSlotBooked(dateStr, startTime)) {
+      return NextResponse.json({ error: "This time slot is already booked" }, { status: 409 });
+    }
+
     // Calculate end time
     const [hours, minutes] = startTime.split(":").map(Number);
     const startDate = new Date(date);
@@ -50,8 +75,8 @@ export async function POST(request: Request) {
     const endDate = addMinutes(startDate, service.duration);
     const endTime = format(endDate, "HH:mm");
 
-    // Create mock booking response (in production this would save to database)
-    const booking = {
+    // Create booking
+    const booking: Booking = {
       id: `booking-${Date.now()}`,
       serviceId,
       date: new Date(date).toISOString(),
@@ -70,6 +95,9 @@ export async function POST(request: Request) {
       },
       createdAt: new Date().toISOString(),
     };
+
+    // Store the booking
+    addBooking(booking);
 
     return NextResponse.json(booking, { status: 201 });
   } catch (error) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDay } from "date-fns";
+import { getBookingsByDate } from "@/lib/bookings-store";
 
 // Hardcoded business hours
 const businessHours: Record<number, { isOpen: boolean; openTime?: string; closeTime?: string }> = {
@@ -78,7 +79,15 @@ export async function GET(request: NextRequest) {
 
   const duration = serviceDurations[serviceId] || 30;
 
-  const slots = generateTimeSlots(hours.openTime!, hours.closeTime!, duration);
+  // Generate all possible time slots
+  const allSlots = generateTimeSlots(hours.openTime!, hours.closeTime!, duration);
 
-  return NextResponse.json({ slots });
+  // Get existing bookings for this date
+  const existingBookings = getBookingsByDate(dateStr);
+  const bookedTimes = new Set(existingBookings.map((b) => b.startTime));
+
+  // Filter out booked slots
+  const availableSlots = allSlots.filter((slot) => !bookedTimes.has(slot));
+
+  return NextResponse.json({ slots: availableSlots });
 }
