@@ -44,7 +44,10 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
-      <main className="ml-64 p-8">{children}</main>
+      {/* Mobile: top header (h-14) + bottom nav (h-16), Desktop: sidebar (w-64) */}
+      <main className="pt-14 pb-20 px-4 lg:pt-0 lg:pb-0 lg:ml-64 lg:p-8">
+        {children}
+      </main>
     </div>
   );
 }

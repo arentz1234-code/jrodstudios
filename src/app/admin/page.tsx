@@ -97,10 +97,39 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <div className="flex gap-2">
+    <div className="py-4 lg:py-0">
+      {/* Header */}
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Dashboard</h1>
+          <button
+            onClick={fetchBookings}
+            className="lg:hidden p-2 text-gray-700 bg-white border border-gray-300 rounded-lg"
+            title="Refresh"
+          >
+            <IoRefresh className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Mobile Action Buttons */}
+        <div className="flex gap-2 lg:hidden">
+          <Link
+            href="/admin/bookings?action=new"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-white bg-forest rounded-lg active:bg-forest-light"
+          >
+            <IoAdd className="w-5 h-5" />
+            Quick Book
+          </Link>
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg"
+          >
+            <IoDownload className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Desktop Action Buttons */}
+        <div className="hidden lg:flex gap-2 justify-end -mt-10">
           <button
             onClick={fetchBookings}
             className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
@@ -125,17 +154,17 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {/* Stats - 2x2 grid on mobile, 4 columns on desktop */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mb-6 lg:mb-8">
         <Card>
-          <div className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-forest/20 rounded-lg flex items-center justify-center">
-                <IoCalendar className="w-6 h-6 text-forest" />
+          <div className="p-4 lg:p-6">
+            <div className="flex items-center gap-3 lg:gap-4">
+              <div className="w-10 h-10 lg:w-12 lg:h-12 bg-forest/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                <IoCalendar className="w-5 h-5 lg:w-6 lg:h-6 text-forest" />
               </div>
-              <div>
-                <p className="text-sm text-gray-500">Today&apos;s Bookings</p>
-                <p className="text-2xl font-bold text-gray-900">
+              <div className="min-w-0">
+                <p className="text-xs lg:text-sm text-gray-500 truncate">Today</p>
+                <p className="text-xl lg:text-2xl font-bold text-gray-900">
                   {isLoading ? "..." : todayBookings.length}
                 </p>
               </div>
@@ -144,14 +173,14 @@ export default function AdminDashboard() {
         </Card>
 
         <Card>
-          <div className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <IoCheckmark className="w-6 h-6 text-green-600" />
+          <div className="p-4 lg:p-6">
+            <div className="flex items-center gap-3 lg:gap-4">
+              <div className="w-10 h-10 lg:w-12 lg:h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <IoCheckmark className="w-5 h-5 lg:w-6 lg:h-6 text-green-600" />
               </div>
-              <div>
-                <p className="text-sm text-gray-500">Completed Today</p>
-                <p className="text-2xl font-bold text-gray-900">
+              <div className="min-w-0">
+                <p className="text-xs lg:text-sm text-gray-500 truncate">Done</p>
+                <p className="text-xl lg:text-2xl font-bold text-gray-900">
                   {isLoading ? "..." : completedToday}
                 </p>
               </div>
@@ -160,14 +189,14 @@ export default function AdminDashboard() {
         </Card>
 
         <Card>
-          <div className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-sage/20 rounded-lg flex items-center justify-center">
-                <IoCash className="w-6 h-6 text-sage-dark" />
+          <div className="p-4 lg:p-6">
+            <div className="flex items-center gap-3 lg:gap-4">
+              <div className="w-10 h-10 lg:w-12 lg:h-12 bg-sage/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                <IoCash className="w-5 h-5 lg:w-6 lg:h-6 text-sage-dark" />
               </div>
-              <div>
-                <p className="text-sm text-gray-500">Today&apos;s Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">
+              <div className="min-w-0">
+                <p className="text-xs lg:text-sm text-gray-500 truncate">Revenue</p>
+                <p className="text-xl lg:text-2xl font-bold text-gray-900">
                   {isLoading ? "..." : formatPrice(todayRevenue)}
                 </p>
               </div>
@@ -176,14 +205,14 @@ export default function AdminDashboard() {
         </Card>
 
         <Card>
-          <div className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <IoTime className="w-6 h-6 text-purple-600" />
+          <div className="p-4 lg:p-6">
+            <div className="flex items-center gap-3 lg:gap-4">
+              <div className="w-10 h-10 lg:w-12 lg:h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <IoTime className="w-5 h-5 lg:w-6 lg:h-6 text-purple-600" />
               </div>
-              <div>
-                <p className="text-sm text-gray-500">This Week</p>
-                <p className="text-2xl font-bold text-gray-900">
+              <div className="min-w-0">
+                <p className="text-xs lg:text-sm text-gray-500 truncate">Week</p>
+                <p className="text-xl lg:text-2xl font-bold text-gray-900">
                   {isLoading ? "..." : thisWeekBookings.length}
                 </p>
               </div>
@@ -192,19 +221,20 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Schedule Cards - Stack on mobile */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Today's Schedule */}
         <Card>
-          <div className="p-6">
+          <div className="p-4 lg:p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Today&apos;s Schedule
+              <h2 className="text-base lg:text-lg font-semibold text-gray-900">
+                Today
               </h2>
               <Link
                 href="/admin/calendar"
                 className="text-forest hover:text-forest-light text-sm font-medium"
               >
-                View Calendar
+                Calendar
               </Link>
             </div>
 
@@ -213,11 +243,11 @@ export default function AdminDashboard() {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-forest"></div>
               </div>
             ) : todayBookings.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                No bookings scheduled for today
+              <div className="text-center py-6 lg:py-8 text-gray-500 text-sm">
+                No bookings for today
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2 lg:space-y-3">
                 {todayBookings
                   .sort((a, b) => a.startTime.localeCompare(b.startTime))
                   .map((booking) => (
@@ -229,25 +259,25 @@ export default function AdminDashboard() {
                           : "bg-gray-50 border-gray-200"
                       }`}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="text-sm font-medium text-gray-900 w-16">
+                      <div className="flex items-center gap-2 lg:gap-3 min-w-0">
+                        <div className="text-sm font-medium text-gray-900 w-14 lg:w-16 flex-shrink-0">
                           {formatTime(booking.startTime)}
                         </div>
-                        <div>
-                          <p className="font-medium text-gray-900">
+                        <div className="min-w-0">
+                          <p className="font-medium text-gray-900 text-sm lg:text-base truncate">
                             {booking.customerName}
                           </p>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-xs lg:text-sm text-gray-500 truncate">
                             {booking.service.name}
                           </p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-semibold text-forest">
+                      <div className="text-right flex-shrink-0 ml-2">
+                        <p className="font-semibold text-forest text-sm lg:text-base">
                           {formatPrice(booking.service.price)}
                         </p>
                         <span
-                          className={`text-xs px-2 py-1 rounded-full ${
+                          className={`text-[10px] lg:text-xs px-2 py-0.5 rounded-full ${
                             booking.status === "completed"
                               ? "bg-green-100 text-green-800"
                               : "bg-blue-100 text-blue-800"
@@ -265,10 +295,10 @@ export default function AdminDashboard() {
 
         {/* Upcoming Bookings */}
         <Card>
-          <div className="p-6">
+          <div className="p-4 lg:p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Upcoming Bookings
+              <h2 className="text-base lg:text-lg font-semibold text-gray-900">
+                Upcoming
               </h2>
               <Link
                 href="/admin/bookings"
@@ -283,33 +313,33 @@ export default function AdminDashboard() {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-forest"></div>
               </div>
             ) : upcomingBookings.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-6 lg:py-8 text-gray-500 text-sm">
                 No upcoming bookings
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2 lg:space-y-3">
                 {upcomingBookings.slice(0, 5).map((booking) => (
                   <div
                     key={booking.id}
                     className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"
                   >
-                    <div>
-                      <p className="font-medium text-gray-900">
+                    <div className="min-w-0">
+                      <p className="font-medium text-gray-900 text-sm lg:text-base truncate">
                         {booking.customerName}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-xs lg:text-sm text-gray-500 truncate">
                         {booking.service.name}
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">
+                    <div className="text-right flex-shrink-0 ml-2">
+                      <p className="text-xs lg:text-sm font-medium text-gray-900">
                         {new Date(booking.date).toLocaleDateString("en-US", {
                           weekday: "short",
                           month: "short",
                           day: "numeric",
                         })}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-xs lg:text-sm text-gray-500">
                         {formatTime(booking.startTime)}
                       </p>
                     </div>
@@ -321,13 +351,13 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      {/* Quick Stats */}
-      <Card className="mt-6">
+      {/* Quick Stats - Hidden on mobile for cleaner UI */}
+      <Card className="mt-4 lg:mt-6 hidden lg:block">
         <div className="p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             Quick Stats
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-4 gap-6">
             <div>
               <p className="text-sm text-gray-500">Total Bookings</p>
               <p className="text-2xl font-bold text-gray-900">
