@@ -302,7 +302,15 @@ function ServicesSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {services.map((service, index) => (
             <AnimatedSection key={service.name} delay={index * 50}>
-              <div className="group bg-cream-light border border-forest/10 p-5 sm:p-8 hover:border-forest/30 active:border-forest/50 transition-all duration-500 h-full touch-manipulation">
+              <button
+                onClick={() => {
+                  const bookSection = document.getElementById("book");
+                  if (bookSection) {
+                    bookSection.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+                className="group bg-cream-light border border-forest/10 p-5 sm:p-8 hover:border-forest/30 active:border-forest/50 transition-all duration-500 h-full touch-manipulation w-full text-left cursor-pointer"
+              >
                 <div className="flex justify-between items-start mb-3 sm:mb-4 gap-4">
                   <h3 className="font-serif text-xl sm:text-2xl text-forest group-hover:text-forest-light transition-colors">
                     {service.name}
@@ -317,7 +325,7 @@ function ServicesSection() {
                 <p className="text-xs sm:text-sm text-sage-dark uppercase tracking-wider">
                   {service.duration}
                 </p>
-              </div>
+              </button>
             </AnimatedSection>
           ))}
         </div>
@@ -364,8 +372,13 @@ function Calendar({
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  // Calculate 2 weeks from today
+  const twoWeeksFromNow = new Date(today);
+  twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
+
   const isDisabled = (date: Date) => {
-    return date < today || date.getDay() === 0;
+    // Disable if: in the past, on Sunday, or more than 2 weeks in advance
+    return date < today || date.getDay() === 0 || date > twoWeeksFromNow;
   };
 
   const isSameDay = (d1: Date, d2: Date | null) => {
@@ -725,7 +738,7 @@ function BookingSection() {
             <h3 className="font-serif text-2xl text-cream mb-6">Select a Date</h3>
             <div className="max-w-md mx-auto">
               <Calendar selectedDate={selectedDate} onDateSelect={handleDateSelect} />
-              <p className="text-center text-cream/40 text-sm mt-4">Closed on Sundays</p>
+              <p className="text-center text-cream/40 text-sm mt-4">Closed on Sundays. Bookings available up to 2 weeks in advance.</p>
             </div>
           </AnimatedSection>
         )}
