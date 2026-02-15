@@ -1,7 +1,15 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { prisma } from "./prisma";
+
+// Hardcoded admin for demo (password: admin123)
+const DEMO_ADMIN = {
+  id: "admin-1",
+  email: "admin@jrodstudios.com",
+  name: "Admin",
+  // bcrypt hash of "admin123"
+  password: "$2a$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1u",
+};
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,17 +24,14 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const admin = await prisma.admin.findUnique({
-          where: { email: credentials.email },
-        });
-
-        if (!admin) {
+        // Check against demo admin
+        if (credentials.email !== DEMO_ADMIN.email) {
           return null;
         }
 
         const isValid = await bcrypt.compare(
           credentials.password,
-          admin.password
+          DEMO_ADMIN.password
         );
 
         if (!isValid) {
@@ -34,9 +39,9 @@ export const authOptions: NextAuthOptions = {
         }
 
         return {
-          id: admin.id,
-          email: admin.email,
-          name: admin.name,
+          id: DEMO_ADMIN.id,
+          email: DEMO_ADMIN.email,
+          name: DEMO_ADMIN.name,
         };
       },
     }),
@@ -61,4 +66,5 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  secret: process.env.NEXTAUTH_SECRET || "jrod-studios-secret-key",
 };
