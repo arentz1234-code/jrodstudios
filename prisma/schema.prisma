@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Service {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  duration    Int       // minutes
+  isActive    Boolean   @default(true)
+  sortOrder   Int       @default(0)
+  bookings    Booking[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Booking {
+  id            String   @id @default(cuid())
+  customerName  String
+  customerEmail String
+  customerPhone String
+  date          DateTime // Date only (time stored separately)
+  startTime     String   // "09:00" format
+  endTime       String   // "09:30" format
+  status        String   @default("confirmed") // confirmed, cancelled, completed
+  notes         String?
+  serviceId     String
+  service       Service  @relation(fields: [serviceId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model BlockedTime {
+  id        String   @id @default(cuid())
+  date      DateTime
+  startTime String?  // "09:00" or null for full day
+  endTime   String?  // "19:00" or null for full day
+  allDay    Boolean  @default(false)
+  reason    String?
+  createdAt DateTime @default(now())
+}
+
+model BusinessHours {
+  id        String  @id @default(cuid())
+  dayOfWeek Int     @unique // 0=Sunday, 1=Monday, etc.
+  isOpen    Boolean
+  openTime  String? // "09:00"
+  closeTime String? // "19:00"
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // bcrypt hashed
+  name      String
+  createdAt DateTime @default(now())
+}

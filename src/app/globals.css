@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream text-forest antialiased;
+  }
+
+  ::selection {
+    @apply bg-forest/20 text-forest;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-forest text-cream px-6 sm:px-8 py-3.5 sm:py-4 font-sans font-semibold tracking-wide
+           hover:bg-forest-light active:bg-forest-dark transition-all duration-300
+           focus:outline-none focus:ring-2 focus:ring-forest focus:ring-offset-2 focus:ring-offset-cream
+           disabled:opacity-50 disabled:cursor-not-allowed uppercase text-sm
+           touch-manipulation min-h-[48px] inline-flex items-center justify-center;
+  }
+
+  .btn-outline {
+    @apply border border-forest/30 text-forest px-6 sm:px-8 py-3.5 sm:py-4 font-sans font-semibold tracking-wide
+           hover:bg-forest/10 hover:border-forest active:bg-forest/20 transition-all duration-300
+           focus:outline-none focus:ring-2 focus:ring-forest/50 focus:ring-offset-2 focus:ring-offset-cream
+           disabled:opacity-50 disabled:cursor-not-allowed uppercase text-sm
+           touch-manipulation min-h-[48px] inline-flex items-center justify-center;
+  }
+
+  .section-heading {
+    @apply font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-forest;
+  }
+
+  .section-subheading {
+    @apply font-sans text-sm uppercase tracking-[0.2em] text-sage;
+  }
+
+  .card-light {
+    @apply bg-cream-light border border-forest/10;
+  }
+
+  .card-dark {
+    @apply bg-charcoal border border-cream/10;
+  }
+
+  .divider {
+    @apply h-px bg-gradient-to-r from-transparent via-forest/20 to-transparent;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-forest to-sage bg-clip-text text-transparent;
+  }
+}
+
+/* Prevent zoom on input focus on iOS */
+@media screen and (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Parallax container */
+  .parallax-container {
+    @apply relative overflow-hidden;
+  }
+
+  /* Subtle grain texture overlay */
+  .grain-overlay::before {
+    content: "";
+    @apply absolute inset-0 pointer-events-none opacity-[0.02];
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  /* Gradient overlays */
+  .cream-gradient {
+    background: linear-gradient(
+      180deg,
+      rgba(242, 240, 235, 0) 0%,
+      rgba(242, 240, 235, 0.9) 50%,
+      rgba(242, 240, 235, 1) 100%
+    );
+  }
+
+  .forest-gradient {
+    background: linear-gradient(
+      180deg,
+      rgba(30, 61, 48, 0) 0%,
+      rgba(30, 61, 48, 0.9) 50%,
+      rgba(30, 61, 48, 1) 100%
+    );
+  }
+
+  .forest-glow {
+    background: radial-gradient(
+      ellipse at 50% 0%,
+      rgba(45, 90, 71, 0.08) 0%,
+      transparent 70%
+    );
+  }
+
+  .sage-glow {
+    background: radial-gradient(
+      ellipse at 50% 100%,
+      rgba(107, 143, 122, 0.06) 0%,
+      transparent 70%
+    );
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-cream-dark;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-forest/30 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-forest/50;
+}
